@@ -12,3 +12,5 @@ require (
 	github.com/terraform-providers/terraform-provider-random v2.0.0+incompatible // indirect
 	google.golang.org/api v0.6.0 // indirect
 )
+
+go 1.13
