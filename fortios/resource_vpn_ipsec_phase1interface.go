@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/fgtdev/fortios-sdk-go/sdkcore"
+	forticlient "github.com/fgtdev/fortios-sdk-go/sdkcore"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -108,6 +108,11 @@ func resourceVPNIPsecPhase1Interface() *schema.Resource {
 				Optional: true,
 				Default:  "",
 			},
+			"ike_version": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "1",
+			},
 		},
 	}
 }
@@ -136,6 +141,7 @@ func resourceVPNIPsecPhase1InterfaceCreate(d *schema.ResourceData, m interface{}
 	modeCfg := d.Get("mode_cfg").(string)
 	authmethod := d.Get("authmethod").(string)
 	authmethodRemote := d.Get("authmethod_remote").(string)
+	ikeVersion := d.Get("ike_version").(string)
 
 	var certificates []forticlient.MultValue
 
@@ -170,6 +176,7 @@ func resourceVPNIPsecPhase1InterfaceCreate(d *schema.ResourceData, m interface{}
 		ModeCfg:             modeCfg,
 		Authmethod:          authmethod,
 		AuthmethodRemote:    authmethodRemote,
+		IkeVersion:          ikeVersion,
 	}
 
 	//Call process by sdk
@@ -210,6 +217,7 @@ func resourceVPNIPsecPhase1InterfaceUpdate(d *schema.ResourceData, m interface{}
 	modeCfg := d.Get("mode_cfg").(string)
 	authmethod := d.Get("authmethod").(string)
 	authmethodRemote := d.Get("authmethod_remote").(string)
+	ikeVersion := d.Get("ike_version").(string)
 
 	var certificates []forticlient.MultValue
 
@@ -248,6 +256,7 @@ func resourceVPNIPsecPhase1InterfaceUpdate(d *schema.ResourceData, m interface{}
 		ModeCfg:             modeCfg,
 		Authmethod:          authmethod,
 		AuthmethodRemote:    authmethodRemote,
+		IkeVersion:          ikeVersion,
 	}
 
 	//Call process by sdk
@@ -318,6 +327,7 @@ func resourceVPNIPsecPhase1InterfaceRead(d *schema.ResourceData, m interface{}) 
 	d.Set("mode_cfg", o.ModeCfg)
 	d.Set("authmethod", o.Authmethod)
 	d.Set("authmethod_remote", o.AuthmethodRemote)
+	d.Set("ike_version", o.IkeVersion)
 
 	return nil
 }
