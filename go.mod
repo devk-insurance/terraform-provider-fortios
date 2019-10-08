@@ -13,4 +13,6 @@ require (
 	google.golang.org/api v0.6.0 // indirect
 )
 
+replace github.com/fgtdev/fortios-sdk-go v1.0.1 => ../fortios-sdk-go
+
 go 1.13
