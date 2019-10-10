@@ -113,6 +113,21 @@ func resourceVPNIPsecPhase1Interface() *schema.Resource {
 				Optional: true,
 				Default:  "1",
 			},
+			"local_gateway": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "",
+			},
+			"dh_group": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "2",
+			},
+			"key_life": &schema.Schema{
+				Type:     schema.TypeInt,
+				Optional: true,
+				Default:  "28800",
+			},
 		},
 	}
 }
@@ -142,6 +157,9 @@ func resourceVPNIPsecPhase1InterfaceCreate(d *schema.ResourceData, m interface{}
 	authmethod := d.Get("authmethod").(string)
 	authmethodRemote := d.Get("authmethod_remote").(string)
 	ikeVersion := d.Get("ike_version").(string)
+	localGateway := d.Get("local_gateway").(string)
+	dhGrp := d.Get("dh_group").(string)
+	keyLife := d.Get("key_life").(int)
 
 	var certificates []forticlient.MultValue
 
@@ -177,6 +195,9 @@ func resourceVPNIPsecPhase1InterfaceCreate(d *schema.ResourceData, m interface{}
 		Authmethod:          authmethod,
 		AuthmethodRemote:    authmethodRemote,
 		IkeVersion:          ikeVersion,
+		LocalGateway:        localGateway,
+		DHGroup:             dhGrp,
+		KeyLife:             keyLife,
 	}
 
 	//Call process by sdk
@@ -218,6 +239,9 @@ func resourceVPNIPsecPhase1InterfaceUpdate(d *schema.ResourceData, m interface{}
 	authmethod := d.Get("authmethod").(string)
 	authmethodRemote := d.Get("authmethod_remote").(string)
 	ikeVersion := d.Get("ike_version").(string)
+	localGateway := d.Get("local_gateway").(string)
+	dhGrp := d.Get("dh_group").(string)
+	keyLife := d.Get("key_life").(int)
 
 	var certificates []forticlient.MultValue
 
@@ -257,6 +281,9 @@ func resourceVPNIPsecPhase1InterfaceUpdate(d *schema.ResourceData, m interface{}
 		Authmethod:          authmethod,
 		AuthmethodRemote:    authmethodRemote,
 		IkeVersion:          ikeVersion,
+		LocalGateway:        localGateway,
+		DHGroup:             dhGrp,
+		KeyLife:             keyLife,
 	}
 
 	//Call process by sdk
@@ -328,6 +355,9 @@ func resourceVPNIPsecPhase1InterfaceRead(d *schema.ResourceData, m interface{}) 
 	d.Set("authmethod", o.Authmethod)
 	d.Set("authmethod_remote", o.AuthmethodRemote)
 	d.Set("ike_version", o.IkeVersion)
+	d.Set("local_gateway", o.LocalGateway)
+	d.Set("dh_group", o.DHGroup)
+	d.Set("key_life", o.KeyLife)
 
 	return nil
 }
