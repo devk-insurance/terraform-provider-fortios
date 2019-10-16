@@ -1,6 +1,7 @@
 package fortios
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	"os"
 	"time"
 
+	"git.hv.devk.de/awsplattform/swagger-fortios"
 	"github.com/fgtdev/fortios-sdk-go/auth"
 	"github.com/fgtdev/fortios-sdk-go/sdkcore"
 )
@@ -27,6 +29,14 @@ type Config struct {
 type FortiClient struct {
 	//to sdk client
 	Client *forticlient.FortiSDKClient
+
+	SWG *SWG
+}
+
+// SWG is a wrapper for a swagger-generated client
+type SWG struct {
+	Ctx    context.Context
+	Client *swagger.APIClient
 }
 
 // CreateClient creates a FortiClient Object with the authentication information.
@@ -92,6 +102,15 @@ func (c *Config) CreateClient() (interface{}, error) {
 	fc := forticlient.NewClient(auth, client)
 
 	fClient.Client = fc
+
+	swaggerClientConfiguration := swagger.NewConfiguration()
+	swaggerClientConfiguration.Host = auth.Hostname
+	swaggerClientConfiguration.HTTPClient = client
+
+	fClient.SWG = &SWG{
+		Ctx:    context.WithValue(context.Background(), swagger.ContextAccessToken, auth.Token),
+		Client: swagger.NewAPIClient(swaggerClientConfiguration),
+	}
 
 	return &fClient, nil
 }

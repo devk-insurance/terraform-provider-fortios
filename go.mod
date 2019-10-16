@@ -1,7 +1,8 @@
 module github.com/terraform-providers/terraform-provider-fortios
 
 require (
-	git.hv.devk.de/awsplattform/swagger-fortios v0.0.4 // indirect
+	git.hv.devk.de/awsplattform/swagger-fortios v0.0.4
+	github.com/antihax/optional v1.0.0
 	github.com/aws/aws-sdk-go v1.19.49 // indirect
 	github.com/fgtdev/fortios-sdk-go v1.0.1
 	github.com/hashicorp/hcl v1.0.0 // indirect
