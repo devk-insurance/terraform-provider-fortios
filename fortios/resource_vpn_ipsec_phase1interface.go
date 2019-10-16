@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 
+	"git.hv.devk.de/awsplattform/swagger-fortios"
+	"github.com/antihax/optional"
 	forticlient "github.com/fgtdev/fortios-sdk-go/sdkcore"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -328,6 +330,19 @@ func resourceVPNIPsecPhase1InterfaceRead(d *schema.ResourceData, m interface{}) 
 	if o == nil {
 		log.Printf("[WARN] resource (%s) not found, removing from state", d.Id())
 		d.SetId("")
+		return nil
+	}
+
+	s := m.(*FortiClient).SWG
+	swaggerResult, _, swaggerErr := s.Client.VpnIpsecphase1InterfaceApi.VpnIpsecPhase1InterfaceGet(s.Ctx, &swagger.VpnIpsecPhase1InterfaceGetOpts{
+		Key:        optional.NewString(mkey),
+	})
+	if swaggerErr != nil {
+		return fmt.Errorf("Error reading VPN IPsec Phase1Interface: %s", swaggerErr)
+	}
+
+	if swaggerResult == nil {
+		log.Printf("[ERROR] swaggerResult (%s) not found", d.Id())
 		return nil
 	}
 
