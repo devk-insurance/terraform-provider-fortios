@@ -1,16 +1,20 @@
 package fortios
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/fgtdev/fortios-sdk-go/auth"
 	"github.com/fgtdev/fortios-sdk-go/sdkcore"
+	"gitlab.com/fortios/fortisdk"
 )
 
 // Config gets the authentication information from the given metadata
@@ -27,6 +31,8 @@ type Config struct {
 type FortiClient struct {
 	//to sdk client
 	Client *forticlient.FortiSDKClient
+
+	SDK *fortisdk.ClientWithResponses
 }
 
 // CreateClient creates a FortiClient Object with the authentication information.
@@ -49,6 +55,7 @@ func (c *Config) CreateClient() (interface{}, error) {
 	if auth.CABundle == "" {
 		auth.GetEnvCABundle()
 	}
+	//auth.Hostname = auth.Hostname + ":10443"
 
 	if auth.CABundle != "" {
 		f, err := os.Open(auth.CABundle)
@@ -92,6 +99,39 @@ func (c *Config) CreateClient() (interface{}, error) {
 	fc := forticlient.NewClient(auth, client)
 
 	fClient.Client = fc
+
+	// Example providing your own provider using an anonymous function wrapping in the
+	// InterceptoFn adapter. The behaviour between the InterceptorFn and the Interceptor interface
+	// are the same as http.HandlerFunc and http.Handler.
+	customProvider := func(req *http.Request, ctx context.Context) error {
+		// Just log the request header, nothing else.
+		log.Println(req.Header)
+		query := req.URL.Query()
+		query.Add("access_token", auth.Token)
+		path := req.URL.Path
+
+		noHTTP := strings.Replace(path, "https:", "PLACEHOLDER", -1)
+		noHTTPSingleSlash := strings.Replace(noHTTP, "//", "/", -1)
+		withHTTP := strings.Replace(noHTTPSingleSlash, "PLACEHOLDER", "https:", -1)
+		req.URL.RawPath = withHTTP
+		req.URL.RawQuery = query.Encode()
+		raw := req.URL.RawQuery
+		log.Println(string(raw))
+		return nil
+	}
+	sdkClient, err := fortisdk.NewClient(
+		context.Background(),
+		[]fortisdk.ClientOption{
+			fortisdk.WithBaseURL("https://" + auth.Hostname + "/api/v2/cmdb"),
+			fortisdk.WithHTTPClient(client),
+			fortisdk.WithRequestEditorFn(customProvider),
+		}...,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	fClient.SDK = sdkClient
 
 	return &fClient, nil
 }

@@ -1,11 +1,14 @@
 package fortios
 
 import (
+	"context"
 	"fmt"
 	"log"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/fgtdev/fortios-sdk-go/sdkcore"
 	"github.com/hashicorp/terraform/helper/schema"
+	"gitlab.com/fortios/fortisdk"
 )
 
 func resourceVPNIPsecPhase1Interface() *schema.Resource {
@@ -119,6 +122,13 @@ func resourceVPNIPsecPhase1Interface() *schema.Resource {
 func resourceVPNIPsecPhase1InterfaceCreate(d *schema.ResourceData, m interface{}) error {
 	c := m.(*FortiClient).Client
 	c.Retries = 1
+	sdk := m.(*FortiClient).SDK
+
+	//params := sdk.PostVpnIpsecPhase1InterfaceParams{}
+	//body := sdk.PostVpnIpsecPhase1InterfaceJSONRequestBody
+	//sdk.PostVpnIpsecPhase1Interface(context.Background(), params, body)
+	//sdk.NewVpn
+	//PostVpnIpsecPhase1Interface(ctx context.Context, params *PostVpnIpsecPhase1InterfaceParams, body PostVpnIpsecPhase1InterfaceJSONRequestBody) (*http.Response, error)
 
 	//Get Params from d
 	name := d.Get("name").(string)
@@ -154,36 +164,61 @@ func resourceVPNIPsecPhase1InterfaceCreate(d *schema.ResourceData, m interface{}
 	}
 
 	//Build input data by sdk
-	i := &forticlient.JSONVPNIPsecPhase1Interface{
-		Name:                name,
-		Type:                typef,
-		Interface:           interfacef,
-		Peertype:            peertype,
-		Proposal:            proposal,
-		Comments:            comments,
-		WizardType:          wizardType,
-		RemoteGw:            remoteGw,
-		Psksecret:           psksecret,
-		Certificate:         certificates,
-		Peerid:              peerid,
-		Peer:                peer,
-		Peergrp:             peergrp,
-		IPv4SplitInclude:    ipv4SplitInclude,
-		SplitIncludeService: splitIncludeService,
-		IPv4SplitExclude:    ipv4SplitExclude,
-		ModeCfg:             modeCfg,
-		Authmethod:          authmethod,
-		AuthmethodRemote:    authmethodRemote,
+	//i := &forticlient.JSONVPNIPsecPhase1Interface{
+	//	Name:                name,
+	//	Type:                typef,
+	//	Interface:           interfacef,
+	//	Peertype:            peertype,
+	//	Proposal:            proposal,
+	//	Comments:            comments,
+	//	WizardType:          wizardType,
+	//	RemoteGw:            remoteGw,
+	//	Psksecret:           psksecret,
+	//	Certificate:         certificates,
+	//	Peerid:              peerid,
+	//	Peer:                peer,
+	//	Peergrp:             peergrp,
+	//	IPv4SplitInclude:    ipv4SplitInclude,
+	//	SplitIncludeService: splitIncludeService,
+	//	IPv4SplitExclude:    ipv4SplitExclude,
+	//	ModeCfg:             modeCfg,
+	//	Authmethod:          authmethod,
+	//	AuthmethodRemote:    authmethodRemote,
+	//}
+
+	params := fortisdk.PostVpnIpsecPhase1InterfaceParams{}
+	body := fortisdk.PostVpnIpsecPhase1InterfaceJSONRequestBody{
+		Name:                aws.String(name),
+		Type:                aws.String(typef),
+		Interface:           aws.String(interfacef),
+		Peertype:            aws.String(peertype),
+		Proposal:            aws.String(proposal),
+		Comments:            aws.String(comments),
+		WizardType:          aws.String(wizardType),
+		RemoteGw:            aws.String(remoteGw),
+		Psksecret:           aws.String(psksecret),
+		Peerid:              aws.String(peerid),
+		Peer:                aws.String(peer),
+		Peergrp:             aws.String(peergrp),
+		Ipv4SplitInclude:    aws.String(ipv4SplitInclude),
+		SplitIncludeService: aws.String(splitIncludeService),
+		Ipv4SplitExclude:    aws.String(ipv4SplitExclude),
+		ModeCfg:             aws.String(modeCfg),
+		Authmethod:          aws.String(authmethod),
+		AuthmethodRemote:    aws.String(authmethodRemote),
 	}
 
+	response, err := sdk.PostVpnIpsecPhase1InterfaceWithResponse(context.Background(), &params, body)
+	//o, err := c.CreateVPNIPsecPhase1Interface(i)
 	//Call process by sdk
-	o, err := c.CreateVPNIPsecPhase1Interface(i)
 	if err != nil {
 		return fmt.Errorf("Error creating VPN IPsec Phase1Interface: %s", err)
 	}
+	fmt.Println(response)
+
 
 	// Set index for d
-	d.SetId(o.Mkey)
+	//d.SetId(o.Mkey)
 
 	return resourceVPNIPsecPhase1InterfaceRead(d, m)
 }

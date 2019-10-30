@@ -22,7 +22,7 @@ func TestAccFortiOSVPNIPsecPhase1Interface_basic(t *testing.T) {
 					testAccCheckFortiOSVPNIPsecPhase1InterfaceExists("fortios_vpn_ipsec_phase1interface.test1"),
 					resource.TestCheckResourceAttr("fortios_vpn_ipsec_phase1interface.test1", "name", rname),
 					resource.TestCheckResourceAttr("fortios_vpn_ipsec_phase1interface.test1", "type", "static"),
-					resource.TestCheckResourceAttr("fortios_vpn_ipsec_phase1interface.test1", "interface", "port3"),
+					resource.TestCheckResourceAttr("fortios_vpn_ipsec_phase1interface.test1", "interface", "port1"),
 					resource.TestCheckResourceAttr("fortios_vpn_ipsec_phase1interface.test1", "peertype", "any"),
 					resource.TestCheckResourceAttr("fortios_vpn_ipsec_phase1interface.test1", "proposal", "aes128-sha256 aes256-sha256 aes128-sha1 aes256-sha1"),
 					resource.TestCheckResourceAttr("fortios_vpn_ipsec_phase1interface.test1", "comments", "VPN 001Test P1"),
@@ -49,7 +49,7 @@ func TestAccFortiOSVPNIPsecPhase1Interface_basic2(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("fortios_vpn_ipsec_phase1interface.test1", "name", rname),
 					resource.TestCheckResourceAttr("fortios_vpn_ipsec_phase1interface.test1", "type", "dynamic"),
-					resource.TestCheckResourceAttr("fortios_vpn_ipsec_phase1interface.test1", "interface", "port3"),
+					resource.TestCheckResourceAttr("fortios_vpn_ipsec_phase1interface.test1", "interface", "port1"),
 					resource.TestCheckResourceAttr("fortios_vpn_ipsec_phase1interface.test1", "peertype", "any"),
 					resource.TestCheckResourceAttr("fortios_vpn_ipsec_phase1interface.test1", "proposal", "aes128-sha256 aes256-sha256 aes128-sha1 aes256-sha1"),
 					resource.TestCheckResourceAttr("fortios_vpn_ipsec_phase1interface.test1", "comments", "VPN 001Test P2"),
@@ -117,7 +117,7 @@ func testAccFortiOSVPNIPsecPhase1InterfaceConfig1(name string) string {
 resource "fortios_vpn_ipsec_phase1interface" "test1" {
 	name = "%s"
 	type = "static"
-	interface = "port3"
+	interface = "port1"
 	peertype = "any"
 	proposal = "aes128-sha256 aes256-sha256 aes128-sha1 aes256-sha1"
 	comments = "VPN 001Test P1"
